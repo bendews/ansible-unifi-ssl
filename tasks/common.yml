@@ -1,0 +1,54 @@
+---
+- name: Make backup of KeyStore
+  copy:
+    src: "{{ keystore }}"
+    dest: "{{ keystore }}.{{ ansible_date_time.epoch }}.bak"
+    remote_src: yes
+
+- name: Create temporary P12 file
+  tempfile:
+    state: file
+    suffix: .p12temp
+  register: p12_temp
+
+- name: generate PKCS12 CSR
+  command: |
+    openssl pkcs12 -export
+    -in {{ crt_full_path }}
+    -inkey {{ key_full_path }}
+    -CAfile {{ intermediate_full_path }}
+    -out {{ p12_temp.path }} -passout pass:{{ keystore_password }}
+    -caname root -name {{ unifi_alias }}
+
+- name: Stop service
+  service:
+    name: "{{ service_name }}"
+    state: stopped
+
+- name: Delete the previous certificate data from keystore to avoid "already exists" message
+  command: |
+    keytool -delete 
+    -alias {{ unifi_alias }} 
+    -keystore {{ keystore }} 
+    -deststorepass {{ keystore_password }}
+
+- name: Import the temp PKCS12 file into the UniFi keystore
+  command: |
+    keytool -importkeystore
+    -srckeystore {{ p12_temp.path }} -srcstoretype PKCS12
+    -srcstorepass {{ keystore_password }}
+    -destkeystore {{ keystore }}
+    -deststorepass {{ keystore_password }}
+    -destkeypass {{ keystore_password }}
+    -alias {{ unifi_alias }} -trustcacerts
+
+- name: Import the certificate authority data into the UniFi keystore
+  command: |
+    java -jar {{ java_dir }}/lib/ace.jar 
+    import_cert {{ crt_full_path }} {{ intermediate_full_path }}
+  when: service_name == "unifi"
+
+- name: Restart service
+  service:
+    name: "{{ service_name }}"
+    state: restarted

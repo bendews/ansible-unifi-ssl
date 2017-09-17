@@ -1,0 +1,38 @@
+---
+- name: Reset vars
+  set_fact:
+    unifi_dir: ""
+    java_dir: ""
+    keystore: ""
+
+- name: Set Unifi specific vars
+  set_fact:
+    unifi_alias: unifi
+    service_name: unifi
+    keystore_password: aircontrolenterprise
+
+- name: Set Debian Unifi specific vars
+  set_fact:
+    unifi_dir: "/var/lib/unifi"
+    java_dir: "/usr/lib/unifi"
+    keystore: "/var/lib/unifi/keystore"
+  when: ansible_os_family == 'Debian'
+
+- name: Set RedHat/CentOS Unifi specific vars
+  set_fact:
+     unifi_dir: "/opt/UniFi"
+     java_dir: "/opt/UniFi"
+     keystore: "/opt/UniFi/data/keystore"
+  when: ansible_os_family == 'RedHat'
+
+- name: Check if running on Unifi CloudKey
+  stat:
+    path: "/etc/ssl/private/cloudkey.key"
+  register: cloudkey_stat
+
+- name: Set CloudKey specific vars
+  set_fact:
+     unifi_dir: "/usr/lib/unifi/data"
+     java_dir: "/usr/lib/unifi"
+     keystore: "/usr/lib/unifi/data/keystore"
+  when: cloudkey_stat.stat.exists

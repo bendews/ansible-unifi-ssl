@@ -1,0 +1,19 @@
+---
+- name: Reset vars
+  set_fact:
+    unifi_dir: ""
+    java_dir: ""
+    keystore: ""
+
+- name: Set Unifi-Video specific vars
+  set_fact:
+    unifi_alias: airvision
+    keystore_password: ubiquiti
+    service_name: unifi-video
+
+- name: Set Debian Unifi-Video specific vars
+  set_fact:
+    unifi_dir: "/usr/lib/unifi/data"
+    java_dir: ""
+    keystore: "/usr/lib/unifi-video/data/keystore"
+  when:  ansible_os_family == 'Debian'

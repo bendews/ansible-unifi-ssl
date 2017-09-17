@@ -1,0 +1,23 @@
+---
+- name: register new certificate fingerprint
+  command: |
+    openssl x509 -noout 
+    -in {{ crt_full_path }} 
+    -fingerprint -sha1
+  register: cmd_new_fingerprint
+
+- name: register existing certificate fingerprint
+  command: |
+    keytool -list -keystore {{ keystore }} -storepass {{ keystore_password }}
+  register: cmd_old_fingerprint
+
+- set_fact:
+    certificate_match: no
+    new_fingerprint: "{{ cmd_new_fingerprint.stdout | regex_search(regexp) }}"
+    old_fingerprint: "{{ cmd_old_fingerprint.stdout | regex_findall(regexp) }}"
+  vars:
+    regexp: '(?:[0-9a-fA-F]{2}:){19}[0-9a-fA-F]{2}'
+
+- set_fact:
+    certificate_match: yes
+  when: new_fingerprint in old_fingerprint

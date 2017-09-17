@@ -1,0 +1,8 @@
+---
+unifi_alias: ""
+service_name: ""
+keystore_password: ""
+
+unifi_dir: ""
+java_dir: ""
+keystore: ""
