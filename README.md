@@ -10,7 +10,7 @@ Installs SSL certificates for Unifi, Unifi Video and Unifi CloudKey platforms.
 
 ## Role Variables
 
-Available variables are listed below, along with default values (see `defaults/main.yml` for many more variables that can be modified)
+Available variables are listed below, along with default values.
 
 ### Required Fields:
 
@@ -22,8 +22,6 @@ Available variables are listed below, along with default values (see `defaults/m
 It is **strongly reccomended** to use a "Full Chain" certfificate when deploying to a Unifi Video system. There may be issues with Live Playback and other websocket functions if one is not used.
 
 ## Example Playbook
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
     - hosts: unifi
       tasks:
