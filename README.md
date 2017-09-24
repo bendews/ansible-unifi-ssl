@@ -36,7 +36,8 @@ It is **strongly reccomended** to use a "Full Chain" certfificate when deploying
 
 # TODO:
 
-- Add support for copying files located on host machine
+- Add support for copying certificate files located on host machine
+- Add support for non-Debian Unifi-Video 
 - Improve overall structure
 
 # License
