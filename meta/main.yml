@@ -22,4 +22,6 @@ galaxy_info:
   galaxy_tags:
     - ssl
     - unifi
+    - ubiquiti
+    - unifi-video
     - https
